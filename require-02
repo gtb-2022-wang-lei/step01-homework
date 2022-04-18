@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -n "$(date "+%Y-%M-%D %H:%M:%S") "
-
-NAME=$1
-echo Hello  $NAME
+Time=$(date "+%Y-%M-%D %H:%M:%S")
+ID=$1
+Name=$(grep $ID name.list | cut -d' ' -f2)
+echo "[$Time] hello $Name"
