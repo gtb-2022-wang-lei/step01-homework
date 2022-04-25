@@ -1,9 +1,30 @@
 #!/bin/bash
-task_num=0
-if [[ $1=="add" ]] && [[ -n $2  ]]  ;  then
-echo "Test success $2"
+
+if [[ $1=="add" ]] && [[ -n $2  ]] && [[ -f tobedone  ]] && [[ -f completed ]]  ;  then
+temp_num=`head -1 tobedone`
+task_num=$[$[temp_num]+1]
+echo $task_num
+echo $2
+echo "$task_num $2">>tobedone
 echo "command is $1"
+sed -i "1s/$temp_num/$task_num/" ./tobedone
+
+elif [[ ! -f tobedone  ]] && [[ ! -f completed  ]]; then
+echo "Please run todo init command"
+
+elif [[ $1=="init" ]] && [[ ! -f tobedone  ]] && [[ ! -f completed ]] ; then
+touch tobedone
+touch completed
+echo 0 >>tobedone
+
+elif [[ $1=="init" ]] && [[  -f tobedone  ]] && [[  -f completed  ]] ; then
+rm -rf tobedone
+rm -rf completed
+touch tobedone
+touch completed
+echo 0 >>tobedone
+
+else
+ ehco "wrong input"
 fi
-
-
 exit 0
