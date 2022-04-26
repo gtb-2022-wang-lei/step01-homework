@@ -1,6 +1,5 @@
 #!/bin/bash
-
-if [[ $1=="add" ]] && [[ -n $2  ]] && [[ -f tobedone  ]] && [[ -f completed ]]  ;  then
+if [[ $1 == "add" ]] && [[ -n $2  ]] && [[ -f tobedone  ]] && [[ -f completed ]]  ;  then
 temp_num=`head -1 tobedone`
 task_num=$[$[temp_num]+1]
 echo $task_num
@@ -12,19 +11,38 @@ sed -i "1s/$temp_num/$task_num/" ./tobedone
 elif [[ ! -f tobedone  ]] && [[ ! -f completed  ]]; then
 echo "Please run todo init command"
 
-elif [[ $1=="init" ]] && [[ ! -f tobedone  ]] && [[ ! -f completed ]] ; then
+elif [[ $1 == "init" ]] && [[ ! -f tobedone  ]] && [[ ! -f completed ]] ; then
 touch tobedone
 touch completed
+echo init without
 echo 0 >>tobedone
 
-elif [[ $1=="init" ]] && [[  -f tobedone  ]] && [[  -f completed  ]] ; then
+elif [[ $1 == "init" ]] && [[  -f tobedone  ]] && [[  -f completed  ]] ; then
 rm -rf tobedone
 rm -rf completed
 touch tobedone
 touch completed
 echo 0 >>tobedone
 
-else
- ehco "wrong input"
+
+elif  [ ! -n $1 ];  then
+echo "please input index"
+
+
+elif [[ $1 == "mark" ]] && [[  -n $2  ]] ; then
+echo "$2"
+cat tobedone | grep "[$2]" | head -1  >> completed
+sed -i "2,$ s/^$2/#/" tobedone
+
+else 
+echo wrong input
 fi
+
+if [ $1 == "list" ] ; then
+echo "To be Done"
+sed -n '2,$ p' <tobedone
+echo "Completed"
+sed -n '1,$ p' <completed
+fi
+
 exit 0
