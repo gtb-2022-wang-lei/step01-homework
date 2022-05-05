@@ -31,8 +31,17 @@ echo "please input index"
 
 elif [[ $1 == "mark" ]] && [[  -n $2  ]] ; then
 echo "$2"
-cat tobedone | grep "[$2]" | head -1  >> completed
-sed -i "2,$ s/^$2/#/" tobedone
+
+shift
+
+for i in $@
+
+do
+cat tobedone | grep "[$i]" | head -1  >> completed | cat
+sed -i '2,$ '/^$i/d' tobedone
+
+done
+
 
 else 
 echo wrong input
