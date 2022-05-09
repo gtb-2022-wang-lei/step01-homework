@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+echo "usage: <add|mark|list|edit|remove|unmark> [args]"
+fi
+
+if [[ $1 == "init" ]] ;then
+mkdir -p "$HOME/.todo"
+touch "$HOME/.todo/tasks"
+echo "Initialized successfully"
+fi
+
+if [[ ! -f "$HOME/.todo/tasks" ]] ;then
+echo "Please run init command"
+fi
+
+if [[ $1 == "add" ]] ;then
+shift
+declare -r title="$*"
+declare -r last_id=$(cat "$HOME/.todo/tasks" | tail -n1 | cut -d' ' -f1 )
+declare -r current_id=$(( last_id+1 ))
+echo "$current_id $$title" >> "$HOME/.todo/tasks"
+fi
+
+if [[ $1 == "list" ]];then
+ehco "Tobedone"
+grep ^[0-9] "HOME/.todo/tasks"
+
+echo "Completed"
+  if grep --silent "^#" "$HOME/.todo/tasks" ;then
+     grep "^#" "$HOME/.todo/tasks" | sed "s/#//"
+     else
+       echo empty
+  fi
+fi
+if [[ $1 == "edit" ]];then
+  declare -r ID="$2"
+  shift 2
+  declare -r title="$*"
+  if grep "^$[ID]" "$HOME/.todo/tasks";then
+  sed -i "s/^$[ID] .*/$[ID] $[title]/" "$HOME/.todo/tasks"
+  else
+    echo "Task doesn't exist"
+  fi
+fi
+if [[ $1 == "mark" ]];then
+  for Task_ID in $@;do
+    sed -i "s/^${Task_ID} /#&/" "$HOME/.todo/tasks"
+    done
+fi
+if [[ $1 == "unmark" ]] ;then
+  for Task_ID in $@;do
+    sed -i "s/^#${Task_ID} /${Task_ID} " "$HOME/.todo/tasks"
+    done
+fi
+
+if [[ $1 == "remove" ]];then
+  for Task_ID in $@;do
+    sed -i "s/^${Task_ID} /-&/" "$HOME/.todo/tasks"
+    done
+fi
+
+exit 0
